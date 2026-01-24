@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About FermentIQ - Real-Time Batch Monitoring</title>
+    <meta name="description"
+        content="Learn about FermentIQ - AI-powered fermentation monitoring dashboard with real-time WebSocket updates">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@400;500;600;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-content">
+            <div class="logo">
+                <svg class="logo-svg" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="50" cy="50" r="45" stroke="#10B981" stroke-width="6" class="logo-circle" />
+                    <path d="M20 50 H35 L45 25 L55 75 L65 50 H80" stroke="#10B981" stroke-width="6"
+                        stroke-linecap="round" stroke-linejoin="round" class="logo-pulse" />
+                </svg>
+                <div class="logo-text">Ferment<span class="highlight">IQ</span></div>
+            </div>
+            <div class="connection-status">
+                <div id="connection-status" class="status-indicator connected"></div>
+                <span id="connection-text">FermentIQ</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Navigation Bar -->
+    <nav class="navigation-bar">
+        <div class="nav-content">
+            <a href="index.html" class="nav-item" target="_self">
+                <svg class="nav-icon" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="50" cy="50" r="45" stroke="currentColor" stroke-width="6" />
+                    <path d="M20 50 H35 L45 25 L55 75 L65 50 H80" stroke="currentColor" stroke-width="6"
+                        stroke-linecap="round" stroke-linejoin="round" />
+                </svg>
+                <span>Live</span>
+            </a>
+            <a href="#" class="nav-item active" onclick="return false;">
+                <svg class="nav-icon" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="50" cy="50" r="45" stroke="currentColor" stroke-width="6" />
+                    <path d="M20 50 H35 L45 25 L55 75 L65 50 H80" stroke="currentColor" stroke-width="6"
+                        stroke-linecap="round" stroke-linejoin="round" />
+                </svg>
+                <span>About</span>
+            </a>
+        </div>
+    </nav>
+
+    <!-- About Section -->
+    <section class="about-section">
+        <div class="about-container">
+            <div class="about-header">
+                <h1>About FermentIQ</h1>
+                <p class="about-subtitle">AI-Powered Fermentation Monitoring Dashboard</p>
+            </div>
+            <div class="about-content">
+                <div class="about-card">
+                    <h2>What is FermentIQ?</h2>
+                    <p>FermentIQ is a cutting-edge, AI-powered real-time fermentation monitoring dashboard designed to
+                        provide precise control and insights into your fermentation batches. Using advanced machine
+                        learning algorithms and WebSocket-based streaming, FermentIQ delivers live updates on critical
+                        parameters like pH, temperature, and CO2 production.</p>
+                </div>
+                <div class="about-card">
+                    <h2>Key Features</h2>
+                    <ul class="features-list">
+                        <li><strong>Real-Time Monitoring:</strong> WebSocket-based live streaming of batch data</li>
+                        <li><strong>AI-Powered Analysis:</strong> Machine learning algorithms compare your data against
+                            golden standards</li>
+                        <li><strong>Visual Analytics:</strong> Interactive charts for pH, Temperature, and CO2 metrics
+                        </li>
+                        <li><strong>Smart Alerts:</strong> Color-coded status indicators (Perfect, Acceptable,
+                            Concerning, Failed)</li>
+                        <li><strong>Historical Tracking:</strong> Event logs and AI-generated suggestions for batch
+                            optimization</li>
+                        <li><strong>Data Export:</strong> Download batch data as CSV for further analysis</li>
+                    </ul>
+                </div>
+                <div class="about-card">
+                    <h2>Technology Stack</h2>
+                    <div class="tech-stack">
+                        <div class="tech-item">
+                            <span class="tech-name">Frontend</span>
+                            <span class="tech-value">HTML5, CSS3, JavaScript, Chart.js</span>
+                        </div>
+                        <div class="tech-item">
+                            <span class="tech-name">Backend</span>
+                            <span class="tech-value">FastAPI, Python, WebSockets</span>
+                        </div>
+                        <div class="tech-item">
+                            <span class="tech-name">AI/ML</span>
+                            <span class="tech-value">scikit-learn, DTAIDistance, NumPy, Pandas</span>
+                        </div>
+                        <div class="tech-item">
+                            <span class="tech-name">Communication</span>
+                            <span class="tech-value">MQTT, WebSockets, REST API</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="about-card">
+                    <h2>How It Works</h2>
+                    <p>FermentIQ continuously monitors your fermentation batches and compares them against a golden
+                        standard profile. The system uses Dynamic Time Warping (DTW) distance calculations to measure
+                        similarity, providing a quality score that indicates how closely your batch matches ideal
+                        fermentation conditions.</p>
+                    <p>The AI system categorizes batches into four status categories:</p>
+                    <div class="status-legend">
+                        <div class="legend-item">
+                            <div class="legend-dot perfect"></div>
+                            <span><strong>Perfect:</strong> 95%+ match with golden standard</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-dot acceptable"></div>
+                            <span><strong>Acceptable:</strong> 90% to under 95% match</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-dot concerning"></div>
+                            <span><strong>Concerning:</strong> 80% to under 90% match</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-dot failed"></div>
+                            <span><strong>Failed:</strong> Below 80% match</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="about-card">
+                    <h2>Version & Credits</h2>
+                    <p><strong>FermentIQ Dashboard v2.0</strong></p>
+                    <p>Real-time WebSocket Streaming | AI-Powered Monitoring | Open Source</p>
+                    <p class="about-footer">Built with passion for precision fermentation monitoring</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <p>FermentIQ Dashboard v2.0 | Real-time WebSocket Streaming | AI-Powered Monitoring</p>
+    </footer>
+</body>
+
+</html>

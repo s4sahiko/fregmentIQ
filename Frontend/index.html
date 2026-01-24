@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FermentIQ - Real-Time Batch Monitoring</title>
+    <meta name="description" content="AI-powered fermentation monitoring dashboard with real-time WebSocket updates">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@400;500;600;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+</head>
+
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-content">
+            <div class="logo">
+                <svg class="logo-svg" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="50" cy="50" r="45" stroke="#10B981" stroke-width="6" class="logo-circle" />
+                    <path d="M20 50 H35 L45 25 L55 75 L65 50 H80" stroke="#10B981" stroke-width="6"
+                        stroke-linecap="round" stroke-linejoin="round" class="logo-pulse" />
+                </svg>
+                <div class="logo-text">Ferment<span class="highlight">IQ</span></div>
+            </div>
+            <div class="connection-status">
+                <div id="connection-status" class="status-indicator connecting"></div>
+                <span id="connection-text">Connecting...</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Navigation Bar -->
+    <nav class="navigation-bar">
+        <div class="nav-content">
+            <a href="#" class="nav-item active" onclick="navigateTo('live'); return false;">
+                <svg class="nav-icon" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="50" cy="50" r="45" stroke="currentColor" stroke-width="6" />
+                    <path d="M20 50 H35 L45 25 L55 75 L65 50 H80" stroke="currentColor" stroke-width="6"
+                        stroke-linecap="round" stroke-linejoin="round" />
+                </svg>
+                <span>Live</span>
+            </a>
+            <a href="#" class="nav-item" onclick="navigateTo('about'); return false;">
+                <svg class="nav-icon" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="50" cy="50" r="45" stroke="currentColor" stroke-width="6" />
+                    <path d="M20 50 H35 L45 25 L55 75 L65 50 H80" stroke="currentColor" stroke-width="6"
+                        stroke-linecap="round" stroke-linejoin="round" />
+                </svg>
+                <span>About</span>
+            </a>
+        </div>
+    </nav>
+
+    <!-- Tank Status Summary -->
+    <section class="tank-status-summary">
+        <div class="summary-header">
+            <h2>Active Tanks Overview</h2>
+            <span id="total-tanks" class="total-tanks-badge">4 Tanks</span>
+        </div>
+        <div class="status-cards-grid">
+            <div class="status-card perfect" id="status-card-perfect">
+                <div class="status-card-icon">✓</div>
+                <div class="status-card-content">
+                    <span class="status-card-count" id="count-perfect">0</span>
+                    <span class="status-card-label">Perfect</span>
+                </div>
+                <div class="status-card-bar"></div>
+            </div>
+            <div class="status-card acceptable" id="status-card-acceptable">
+                <div class="status-card-icon">◐</div>
+                <div class="status-card-content">
+                    <span class="status-card-count" id="count-acceptable">0</span>
+                    <span class="status-card-label">Acceptable</span>
+                </div>
+                <div class="status-card-bar"></div>
+            </div>
+            <div class="status-card concerning" id="status-card-concerning">
+                <div class="status-card-icon">⚠</div>
+                <div class="status-card-content">
+                    <span class="status-card-count" id="count-concerning">0</span>
+                    <span class="status-card-label">Concerning</span>
+                </div>
+                <div class="status-card-bar"></div>
+            </div>
+            <div class="status-card failed" id="status-card-failed">
+                <div class="status-card-icon">✗</div>
+                <div class="status-card-content">
+                    <span class="status-card-count" id="count-failed">0</span>
+                    <span class="status-card-label">Failed</span>
+                </div>
+                <div class="status-card-bar"></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Main Dashboard -->
+    <main class="dashboard">
+        <!-- Batch 1 -->
+        <section class="batch-section" id="batch1">
+            <div class="batch-header" id="batch1-header">
+                <div class="batch-title">
+                    <h2>Batch 1</h2>
+                    <span id="batch1-status-tag" class="status-tag">Perfect</span>
+                </div>
+                <div class="batch-info">
+                    <span id="batch1-score" class="quality-score">Quality: --</span>
+                </div>
+            </div>
+
+            <div class="charts-grid">
+                <div class="chart-container">
+                    <h3>pH Level</h3>
+                    <div class="chart-wrapper">
+                        <canvas id="batch1-ph-chart"></canvas>
+                    </div>
+                </div>
+                <div class="chart-container">
+                    <h3>Temperature</h3>
+                    <div class="chart-wrapper">
+                        <canvas id="batch1-temp-chart"></canvas>
+                    </div>
+                </div>
+                <div class="chart-container">
+                    <h3>CO2 Production</h3>
+                    <div class="chart-wrapper">
+                        <canvas id="batch1-co2-chart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <div class="metrics-row">
+                <div class="metric">
+                    <span class="metric-label">pH</span>
+                    <div id="batch1-ph" class="metric-value">--</div>
+                </div>
+                <div class="metric">
+                    <span class="metric-label">Temperature</span>
+                    <div id="batch1-temp" class="metric-value">--</div>
+                </div>
+                <div class="metric">
+                    <span class="metric-label">CO2</span>
+                    <div id="batch1-co2" class="metric-value">--</div>
+                </div>
+            </div>
+
+            <!-- Split Event Log with AI Suggestions -->
+            <div class="event-log-container">
+                <div class="event-log-panel">
+                    <div class="log-header">
+                        <div class="log-header-left">
+                            <span class="log-icon-header"></span>
+                            <span>Event Log</span>
+                        </div>
+                        <button class="download-btn" onclick="downloadBatchCSV(1)" title="Download as CSV">
+                            ⬇ CSV
+                        </button>
+                    </div>
+                    <div class="log-entries" id="batch1-log-entries"></div>
+                </div>
+                <div class="ai-suggestions-panel">
+                    <div class="ai-header">
+                        <span class="ai-icon-header"></span>
+                        <span>Suggestions</span>
+                    </div>
+                    <div class="ai-suggestions" id="batch1-ai-suggestions">
+                        <div class="ai-empty">No suggestions yet</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Batch 2 -->
+        <section class="batch-section" id="batch2">
+            <div class="batch-header" id="batch2-header">
+                <div class="batch-title">
+                    <h2>Batch 2</h2>
+                    <span id="batch2-status-tag" class="status-tag">Perfect</span>
+                </div>
+                <div class="batch-info">
+                    <span id="batch2-score" class="quality-score">Quality: --</span>
+                </div>
+            </div>
+
+            <div class="charts-grid">
+                <div class="chart-container">
+                    <h3>pH Level</h3>
+                    <div class="chart-wrapper">
+                        <canvas id="batch2-ph-chart"></canvas>
+                    </div>
+                </div>
+                <div class="chart-container">
+                    <h3>Temperature</h3>
+                    <div class="chart-wrapper">
+                        <canvas id="batch2-temp-chart"></canvas>
+                    </div>
+                </div>
+                <div class="chart-container">
+                    <h3>CO2 Production</h3>
+                    <div class="chart-wrapper">
+                        <canvas id="batch2-co2-chart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <div class="metrics-row">
+                <div class="metric">
+                    <span class="metric-label">pH</span>
+                    <div id="batch2-ph" class="metric-value">--</div>
+                </div>
+                <div class="metric">
+                    <span class="metric-label">Temperature</span>
+                    <div id="batch2-temp" class="metric-value">--</div>
+                </div>
+                <div class="metric">
+                    <span class="metric-label">CO2</span>
+                    <div id="batch2-co2" class="metric-value">--</div>
+                </div>
+            </div>
+
+            <!-- Split Event Log with AI Suggestions -->
+            <div class="event-log-container">
+                <div class="event-log-panel">
+                    <div class="log-header">
+                        <div class="log-header-left">
+                            <span class="log-icon-header"></span>
+                            <span>Event Log</span>
+                        </div>
+                        <button class="download-btn" onclick="downloadBatchCSV(2)" title="Download as CSV">
+                            ⬇ CSV
+                        </button>
+                    </div>
+                    <div class="log-entries" id="batch2-log-entries"></div>
+                </div>
+                <div class="ai-suggestions-panel">
+                    <div class="ai-header">
+                        <span class="ai-icon-header"></span>
+                        <span>Suggestions</span>
+                    </div>
+                    <div class="ai-suggestions" id="batch2-ai-suggestions">
+                        <div class="ai-empty">No suggestions yet</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Batch 3 -->
+        <section class="batch-section" id="batch3">
+            <div class="batch-header" id="batch3-header">
+                <div class="batch-title">
+                    <h2>Batch 3</h2>
+                    <span id="batch3-status-tag" class="status-tag">Perfect</span>
+                </div>
+                <div class="batch-info">
+                    <span id="batch3-score" class="quality-score">Quality: --</span>
+                </div>
+            </div>
+
+            <div class="charts-grid">
+                <div class="chart-container">
+                    <h3>pH Level</h3>
+                    <div class="chart-wrapper">
+                        <canvas id="batch3-ph-chart"></canvas>
+                    </div>
+                </div>
+                <div class="chart-container">
+                    <h3>Temperature</h3>
+                    <div class="chart-wrapper">
+                        <canvas id="batch3-temp-chart"></canvas>
+                    </div>
+                </div>
+                <div class="chart-container">
+                    <h3>CO2 Production</h3>
+                    <div class="chart-wrapper">
+                        <canvas id="batch3-co2-chart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <div class="metrics-row">
+                <div class="metric">
+                    <span class="metric-label">pH</span>
+                    <div id="batch3-ph" class="metric-value">--</div>
+                </div>
+                <div class="metric">
+                    <span class="metric-label">Temperature</span>
+                    <div id="batch3-temp" class="metric-value">--</div>
+                </div>
+                <div class="metric">
+                    <span class="metric-label">CO2</span>
+                    <div id="batch3-co2" class="metric-value">--</div>
+                </div>
+            </div>
+
+            <!-- Split Event Log with AI Suggestions -->
+            <div class="event-log-container">
+                <div class="event-log-panel">
+                    <div class="log-header">
+                        <div class="log-header-left">
+                            <span class="log-icon-header"></span>
+                            <span>Event Log</span>
+                        </div>
+                        <button class="download-btn" onclick="downloadBatchCSV(3)" title="Download as CSV">
+                            ⬇ CSV
+                        </button>
+                    </div>
+                    <div class="log-entries" id="batch3-log-entries"></div>
+                </div>
+                <div class="ai-suggestions-panel">
+                    <div class="ai-header">
+                        <span class="ai-icon-header"></span>
+                        <span>Suggestions</span>
+                    </div>
+                    <div class="ai-suggestions" id="batch3-ai-suggestions">
+                        <div class="ai-empty">No suggestions yet</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Batch 4 -->
+        <section class="batch-section" id="batch4">
+            <div class="batch-header" id="batch4-header">
+                <div class="batch-title">
+                    <h2>Batch 4</h2>
+                    <span id="batch4-status-tag" class="status-tag">Perfect</span>
+                </div>
+                <div class="batch-info">
+                    <span id="batch4-score" class="quality-score">Quality: --</span>
+                </div>
+            </div>
+
+            <div class="charts-grid">
+                <div class="chart-container">
+                    <h3>pH Level</h3>
+                    <div class="chart-wrapper">
+                        <canvas id="batch4-ph-chart"></canvas>
+                    </div>
+                </div>
+                <div class="chart-container">
+                    <h3>Temperature</h3>
+                    <div class="chart-wrapper">
+                        <canvas id="batch4-temp-chart"></canvas>
+                    </div>
+                </div>
+                <div class="chart-container">
+                    <h3>CO2 Production</h3>
+                    <div class="chart-wrapper">
+                        <canvas id="batch4-co2-chart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <div class="metrics-row">
+                <div class="metric">
+                    <span class="metric-label">pH</span>
+                    <div id="batch4-ph" class="metric-value">--</div>
+                </div>
+                <div class="metric">
+                    <span class="metric-label">Temperature</span>
+                    <div id="batch4-temp" class="metric-value">--</div>
+                </div>
+                <div class="metric">
+                    <span class="metric-label">CO2</span>
+                    <div id="batch4-co2" class="metric-value">--</div>
+                </div>
+            </div>
+
+            <!-- Split Event Log with AI Suggestions -->
+            <div class="event-log-container">
+                <div class="event-log-panel">
+                    <div class="log-header">
+                        <div class="log-header-left">
+                            <span class="log-icon-header"></span>
+                            <span>Event Log</span>
+                        </div>
+                        <button class="download-btn" onclick="downloadBatchCSV(4)" title="Download as CSV">
+                            ⬇ CSV
+                        </button>
+                    </div>
+                    <div class="log-entries" id="batch4-log-entries"></div>
+                </div>
+                <div class="ai-suggestions-panel">
+                    <div class="ai-header">
+                        <span class="ai-icon-header"></span>
+                        <span>Suggestions</span>
+                    </div>
+                    <div class="ai-suggestions" id="batch4-ai-suggestions">
+                        <div class="ai-empty">No suggestions yet</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <p>FermentIQ Dashboard v2.0 | Real-time WebSocket Streaming | AI-Powered Monitoring</p>
+    </footer>
+
+    <script src="app.js"></script>
+</body>
+
+</html>
